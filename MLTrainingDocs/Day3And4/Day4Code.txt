@@ -1,0 +1,480 @@
+
+
+#### Natural Language Processsing ####
+       ##Simple Text Processing##
+
+
+import re
+​
+
+
+data="Hello Everyone My Mobile number is 9999887666 what is yours?"
+re.sub('\D','',data)
+Out[4]:
+'9999887666'
+
+
+re.sub('\d','*',data)
+
+'Hi Everyone hope u r doing good, you can connect me at abc@xyz.com,\nyou can also connect at anytime, the support mail is support_helpline@gmail.com\nplease also keep boss_**@gmail.com in cc'
+
+
+# \D =anything which is not a number
+# \d =anything which is a number
+​
+
+
+data='''Hi Everyone hope u r doing good, you can connect me at abc@xyz.com,
+you can also connect at anytime, the support mail is support_helpline@gmail.com
+please also keep boss_12@gmail.com in cc'''
+pattern='[a-zA-Z0-9._]+@[a-zA-Z0-9.]+'
+re.findall(pattern,data)
+Out[13]:
+['abc@xyz.com', 'support_helpline@gmail.com', 'boss_12@gmail.com']
+
+
+#### Speach To Text Conversion ####
+
+
+import speech_recognition as  sr
+
+
+r=sr.Recognizer()
+with sr.Microphone(1) as source:
+    audio=r.listen(source,phrase_time_limit=10)
+    
+
+text=r.recognize_google(audio)
+print(text)
+​
+
+
+# Tokenization=splitting text data into chunks of sentences as words
+
+
+data='''Bangalore is capital of karnataka state in southern india.I live in
+Bangalore. I have so many friends here. we are visiting Mysore next Month.
+Mr John is my friend who work in a Software company.his email is ashjh@gmail.com.'''
+
+
+data.split('.')
+Out[4]:
+['Bangalore is capital of karnataka state in southern india',
+ 'I live in\nBangalore',
+ ' I have so many friends here',
+ ' we are visiting Mysore next Month',
+ '\nMr John is my friend who work in a Software company',
+ 'his email is ashjh@gmail',
+ 'com',
+ '']
+
+
+from nltk import sent_tokenize
+sent_tokenize(data)
+
+['Bangalore is capital of karnataka state in southern india.I live in\nBangalore.',
+ 'I have so many friends here.',
+ 'we are visiting Mysore next Month.',
+ 'Mr John is my friend who work in a Software company.his email is ashjh@gmail.com.']
+
+
+import nltk
+nltk.download('punkt')
+[nltk_data] Downloading package punkt to /Users/anaconda/nltk_data...
+[nltk_data]   Unzipping tokenizers/punkt.zip.
+Out[10]:
+True
+
+
+​
+
+
+from nltk import word_tokenize
+word_tokenize(data)
+Out[13]:
+['Bangalore',
+ 'is',
+ 'capital',
+ 'of',
+ 'karnataka',
+ 'state',
+ 'in',
+ 'southern',
+ 'india.I',
+ 'live',
+ 'in',
+ 'Bangalore',
+ '.',
+ 'I',
+ 'have',
+ 'so',
+ 'many',
+ 'friends',
+ 'here',
+ '.',
+ 'we',
+ 'are',
+ 'visiting',
+ 'Mysore',
+ 'next',
+ 'Month',
+ '.',
+ 'Mr',
+ 'John',
+ 'is',
+ 'my',
+ 'friend',
+ 'who',
+ 'work',
+ 'in',
+ 'a',
+ 'Software',
+ 'company.his',
+ 'email',
+ 'is',
+ 'ashjh',
+ '@',
+ 'gmail.com',
+ '.']
+
+# ### Morphological analysis ####
+
+1.streaming-Faster / less accurate-spelling level
+2.lematization=Slower/ more accurate -Meaning level
+
+
+#streaming
+
+from nltk.stem import PorterStemmer
+ps=PorterStemmer()
+
+
+ps.stem('cars')
+
+Out[15]:
+'car'
+
+
+ps.stem('boxes')
+
+Out[17]:
+'box'
+
+
+ps.stem('wives')
+
+Out[18]:
+'wive'
+
+
+#lematization
+
+from nltk.stem import WordNetLemmatizer
+wd=WordNetLemmatizer()
+
+
+wd.lemmatize('children')
+
+Out[26]:
+'child'
+
+
+nltk.download('wordnet')
+[nltk_data] Downloading package wordnet to
+[nltk_data]     /Users/anaconda/nltk_data...
+[nltk_data]   Unzipping corpora/wordnet.zip.
+Out[25]:
+True
+
+
+wd.lemmatize('wives')
+
+Out[27]:
+'wife'
+
+
+from nltk import pos_tag
+
+
+from nltk import pos_tag
+pos_tag(['going','Delhi','Laptop','is'])
+
+Out[48]:
+[('going', 'VBG'), ('Delhi', 'NNP'), ('Laptop', 'NNP'), ('is', 'VBZ')]
+
+
+nltk.download('averaged_perceptron_tagger')
+[nltk_data] Downloading package averaged_perceptron_tagger to
+[nltk_data]     /Users/anaconda/nltk_data...
+[nltk_data]   Unzipping taggers/averaged_perceptron_tagger.zip.
+Out[47]:
+True
+
+
+nltk.help.upenn_tagset('VBZ')
+VBZ: verb, present tense, 3rd person singular
+    bases reconstructs marks mixes displeases seals carps weaves snatches
+    slumps stretches authorizes smolders pictures emerges stockpiles
+    seduces fizzes uses bolsters slaps speaks pleads ...
+
+
+nltk.download('tagsets')
+[nltk_data] Downloading package tagsets to
+[nltk_data]     /Users/anaconda/nltk_data...
+[nltk_data]   Package tagsets is already up-to-date!
+Out[45]:
+True
+
+
+data=[('The food was delicious, I love the food','classA'),
+    ('The iceceeam made the day , it was awesome','classA'),
+    ('The Burger was stale it was bad','classB'),
+    ('my boss is a monster and I hate him','classB'),
+    ('The restaurant was untidy and i have such place','classB'),
+    ('Pizza was bad and I regret paying for it','classB'),
+    ('My wife love pizza more than me','classA'),
+     ('the soup was awesome and tasty','classA'),
+     ('I just love these momos, it was just amazing','classA'),
+     ('the delivery made the food worst I hate this service','classB'),
+     ('Do not serve the stale food its too bad','classB'),
+     ('Maggie is always awesome','classA')]
+
+
+x=[]
+y=[]
+for i in data:
+    x.append(i[0])
+    y.append(i[1])
+
+
+from sklearn.feature_extraction.text import CountVectorizer
+cvec=CountVectorizer(lowercase=True,stop_words='english')
+xd=cvec.fit_transform(x).toarray()
+
+
+xd.shape
+Out[58]:
+(12, 29)
+
+
+cvec.get_feature_names()
+Out[59]:
+['amazing',
+ 'awesome',
+ 'bad',
+ 'boss',
+ 'burger',
+ 'day',
+ 'delicious',
+ 'delivery',
+ 'food',
+ 'hate',
+ 'iceceeam',
+ 'just',
+ 'love',
+ 'maggie',
+ 'momos',
+ 'monster',
+ 'paying',
+ 'pizza',
+ 'place',
+ 'regret',
+ 'restaurant',
+ 'serve',
+ 'service',
+ 'soup',
+ 'stale',
+ 'tasty',
+ 'untidy',
+ 'wife',
+ 'worst']
+
+
+print(cvec.get_stop_words())
+frozenset({'do', 'no', 'became', 'mostly', 'though', 'whereafter', 'get', 'those', 'above', 'con', 'my', 'although', 'cant', 'co', 'somehow', 'one', 'ltd', 'six', 'neither', 'former', 'rather', 'across', 'on', 'against', 'become', 'their', 'how', 'somewhere', 'hereupon', 'sometime', 'some', 'if', 'something', 'to', 'during', 'amount', 'beforehand', 'between', 'so', 'four', 'noone', 'made', 'whence', 'among', 'back', 'twelve', 'another', 'here', 'via', 'further', 'describe', 'his', 'latter', 'mine', 'wherever', 'which', 'that', 'nevertheless', 'others', 'its', 'take', 'whereupon', 'show', 'along', 'but', 'been', 'per', 'until', 'in', 'thin', 'and', 'from', 'well', 'be', 'very', 'had', 'since', 'amoungst', 'eleven', 'couldnt', 'thereby', 'he', 'anything', 'me', 'much', 'too', 'hereby', 'at', 'will', 'after', 'whereby', 'even', 'move', 'anywhere', 'myself', 'three', 'while', 'her', 'should', 'is', 'fifteen', 'sometimes', 'hundred', 'own', 'where', 'only', 'the', 'have', 'except', 'empty', 'done', 'besides', 'ten', 'moreover', 'must', 'themselves', 'serious', 'nothing', 'ie', 'any', 'were', 'fire', 'being', 'please', 'would', 'therein', 'meanwhile', 'your', 'becoming', 'hereafter', 'less', 'off', 'formerly', 'most', 'when', 'whenever', 'many', 'other', 'else', 'out', 'yet', 'because', 'none', 'what', 'part', 'this', 'enough', 'perhaps', 'see', 'inc', 'someone', 'or', 'sixty', 'mill', 'anyhow', 'him', 'herein', 'each', 'afterwards', 'nowhere', 'under', 'five', 'than', 'seemed', 'therefore', 'you', 'full', 'through', 'within', 'whose', 'both', 'thereafter', 'ourselves', 'has', 'detail', 'however', 'bottom', 'are', 'top', 'elsewhere', 'such', 're', 'beyond', 'de', 'twenty', 'becomes', 'nobody', 'us', 'our', 'few', 'anyway', 'more', 'an', 'never', 'seem', 'they', 'nor', 'give', 'down', 'there', 'indeed', 'it', 'why', 'due', 'beside', 'otherwise', 'around', 'hers', 'next', 'we', 'behind', 'third', 'whoever', 'thick', 'wherein', 'already', 'thus', 'toward', 'call', 'up', 'these', 'forty', 'herself', 'anyone', 'yourselves', 'almost', 'several', 'fill', 'either', 'for', 'over', 'itself', 'hasnt', 'two', 'last', 'of', 'onto', 'amongst', 'thru', 'about', 'sincere', 'a', 'i', 'whether', 'un', 'keep', 'who', 'ever', 'cannot', 'least', 'she', 'then', 'before', 'go', 'yourself', 'them', 'yours', 'bill', 'throughout', 'once', 'whole', 'seems', 'towards', 'may', 'cry', 'now', 'eg', 'can', 'everyone', 'put', 'am', 'everywhere', 'ours', 'again', 'interest', 'together', 'still', 'might', 'fifty', 'name', 'eight', 'etc', 'seeming', 'by', 'also', 'nine', 'whereas', 'with', 'upon', 'found', 'whatever', 'always', 'namely', 'same', 'front', 'often', 'without', 'system', 'first', 'below', 'not', 'find', 'was', 'himself', 'hence', 'thence', 'all', 'latterly', 'alone', 'side', 'thereupon', 'whither', 'every', 'everything', 'could', 'into', 'as', 'whom'})
+
+
+xd[0]
+Out[63]:
+array([0, 0, 0, 0, 0, 0, 1, 0, 2, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+       0, 0, 0, 0, 0, 0, 0], dtype=int64)
+
+
+from sklearn.svm import SVC 
+model=SVC()
+model.fit(xd,y)
+
+Out[64]:
+SVC(C=1.0, cache_size=200, class_weight=None, coef0=0.0,
+  decision_function_shape='ovr', degree=3, gamma='auto', kernel='rbf',
+  max_iter=-1, probability=False, random_state=None, shrinking=True,
+  tol=0.001, verbose=False)
+
+
+model.score(xd,y)
+Out[65]:
+1.0
+
+
+ip=['The food is good and I love such food, It was awesome']
+ip=cvec.transform(ip).toarray()
+model.predict(ip.reshape(1,29))
+Out[67]:
+array(['classA'], dtype='<U6')
+
+
+Jupyter Notebook
+Untitled3
+Last Checkpoint: an hour ago
+(autosaved)
+Current Kernel Logo
+Logout
+Python 3 Trusted
+File
+Edit
+View
+Insert
+Cell
+Kernel
+Widgets
+Help
+Run
+In [85]:
+
+from sklearn import datasets
+​
+In [86]:
+
+email=datasets.fetch_20newsgroups()
+In [87]:
+
+xd=email.data
+yd=email.target
+In [88]:
+
+len(xd)
+Out[88]:
+11314
+In [89]:
+
+print(email.target_names[yd[1000]])
+print(xd[1000])
+
+comp.os.ms-windows.misc
+From: dabl2@nlm.nih.gov (Don A.B. Lindbergh)
+Subject: Diamond SS24X, Win 3.1, Mouse cursor
+Organization: National Library of Medicine
+Lines: 10
+
+
+Anybody seen mouse cursor distortion running the Diamond 1024x768x256 driver?
+Sorry, don't know the version of the driver (no indication in the menus) but it's a recently
+delivered Gateway system.  Am going to try the latest drivers from Diamond BBS but wondered
+if anyone else had seen this.
+
+post or email
+
+--Don Lindbergh
+dabl2@lhc.nlm.nih.gov
+
+In [90]:
+
+email.target_names
+Out[90]:
+['alt.atheism',
+ 'comp.graphics',
+ 'comp.os.ms-windows.misc',
+ 'comp.sys.ibm.pc.hardware',
+ 'comp.sys.mac.hardware',
+ 'comp.windows.x',
+ 'misc.forsale',
+ 'rec.autos',
+ 'rec.motorcycles',
+ 'rec.sport.baseball',
+ 'rec.sport.hockey',
+ 'sci.crypt',
+ 'sci.electronics',
+ 'sci.med',
+ 'sci.space',
+ 'soc.religion.christian',
+ 'talk.politics.guns',
+ 'talk.politics.mideast',
+ 'talk.politics.misc',
+ 'talk.religion.misc']
+In [91]:
+
+​
+from sklearn.feature_extraction.text import TfidfVectorizer
+tfidf=TfidfVectorizer(lowercase=True,stop_words='english',max_features=80000)
+In [92]:
+
+xd=tfidf.fit_transform(xd).toarray()
+xd.shape
+Out[92]:
+(11314, 80000)
+In [93]:
+
+from sklearn.naive_bayes import MultinomialNB
+model=MultinomialNB()
+model.fit(xd,yd)
+Out[93]:
+MultinomialNB(alpha=1.0, class_prior=None, fit_prior=True)
+In [94]:
+
+model.score(xd,yd)
+Out[94]:
+0.9576630722998055
+In [96]:
+
+email2=['''
+To: abc@xyz.com
+​
+Hi,
+My Graphics card of the laptop is betraying me and not working so well. it
+the windows 10 operating system wuth NVIDIA Geforce HD graphics.
+''']
+email2=tfidf.transform(email2)
+model.predict(email2.reshape(1,80000))
+Out[96]:
+array([3])
+In [97]:
+
+email.target_names[3]
+Out[97]:
+'comp.sys.ibm.pc.hardware'
+In [102]:
+
+​
+#### TextBlob ####
+
+from textblob import TextBlob
+
+data=TextBlob('Hello Everyone How r u')
+
+data.translate(to='ka')
+
+data=TextBlob('Race 3 is a worst movie')
+data.sentiment.polaruty
+
+data=TextBlob('I havv lost my watch.')
+data.correct()
+
+#### Chatbot Platforms ####
+
+import chatterbot
+
+bot=chatterbot.ChartBot('bot',trainer='chatterbot.trainers_ChatterBotCorpusTrainer')
+
+bot.train('chatter.corpus.english')
+
+
+while True:
+qus=input('You: ')
+if qus=='end':
+break
+ans=bot.get_response(qus)
+print("bot: ",ans)
+
+​
+
+

@@ -1,0 +1,364 @@
+
+
+####################---Decision Tree---####################
+
+
+from sklearn.tree import DecisionTreeClassifier
+
+model2=DecisionTreeClassifier(max_depth=10,min_samples_leaf=6,min_samples_split=20)
+
+#train the algo
+model2.fit(xtr,ytr)
+ypred2=model2.predict(xts)
+metrics.accuracy_score(yts,ypred2)
+metrics.recall_score(yts,ypred2)
+model2.score(xts,yts)
+model2.score(xtr,ytr)
+
+
+#### GRID SEARCH #####
+
+classnames=['Not Exited','Exited']
+fnames=['France','Germany','Spain','CreditScore','Gender','Age','Tenure',
+        'Balance','NumOfProducts','HasCard','IsActiveMember','EstimatedSalary']
+
+
+from sklearn import tree
+import graphviz
+dot_data=tree.export_graphviz(model2,out_file=None,feature_names=fnames,
+                              class_names=classnames,filled=True)
+graph=graphviz.Source(dot_data)
+
+graph
+ 
+import numpy
+from sklearn.grid_search import GridSearchCV
+
+params={'max_depth':numpy.arange(4,16,2),'min_samples_leaf':numpy.arange(5,41,5),
+        'min_samples_split':numpy.arange(10,100,10)}
+
+search=GridSearchCV(estimator=DecisionTreeClassifier(),
+                    param_grid=params,scoring='recall',verbose=True)
+search.fit(x,y)
+search.best_score_
+search.best_params_
+search.grid_scores_
+
+###########################################
+
+#### PIPELINE ####
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sb
+
+df=pd.read_csv(r"/Users/anaconda/Desktop/MlTraining/Churn_Modelling.csv")
+df.drop(['RowNumber','Surname','CustomerId'],axis=1,inplace=True)
+
+cor=df.corr()
+plt.figure(figsize=(10,12))
+sb.heatmap(cor,annot=True,cmap='coolwarm')
+plt.show()
+
+x=df.drop(['Exited'],axis=1)
+y=df['Exited']
+
+#Converting Geography to binary 
+from sklearn.preprocessing import LabelEncoder
+le1=LabelEncoder()
+x['Geography']=le1.fit_transform(x['Geography'])
+
+#Converting Gender to binary 
+le2=LabelEncoder()
+x['Gender']=le1.fit_transform(x['Gender'])
+
+
+from sklearn.model_selection import train_test_split
+xtr,xts,ytr,yts=train_test_split(x,y,test_size=0.2) 
+
+
+#pipeline of operation
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import OneHotEncoder,StandardScaler
+from sklearn.tree import DecisionTreeClassifier
+
+fmodel=Pipeline([('ohe',OneHotEncoder(categorical_features=[1],sparse=False)),
+                 ('sc',StandardScaler()),
+                 
+                 ('model',DecisionTreeClassifier(max_depth=10))])
+
+fmodel.fit(xtr,ytr)
+
+
+#### SUPPORT VECTOR MACHINES ####
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+path="/Users/anaconda/Desktop/Selenum.txt"
+df=pd.read_csv(path,header=None,sep=" ")
+print(df.shape)
+
+df=df.iloc[:,:-1]
+print(df.shape)
+
+
+img=np.array(df.iloc[:,0:256])
+labels=np.array(df.iloc[:,256:266])
+
+print(img.shape)
+print(labels.shape)
+
+plt.imshow(img[88].reshape(16,16),cmap='gray')
+plt.show()
+labels[88]
+
+labels=labels.tolist()
+lb=[]
+for i in labels:
+    lb.append(i.index(1))
+
+lb=np.array(lb)
+lb[88]
+
+plt.imshow(img[88].reshape(16,16),cmap='gray')
+plt.show()
+labels[88]
+
+from sklearn.model_selection import train_test_split
+xtr,xts,ytr,yts=train_test_split(img,lb,test_size=0.2)
+
+from sklearn.svm import SVC
+model=SVC()
+
+model.fit(xtr,ytr)
+
+print(model.score(xtr,ytr))
+print(model.score(xts,yts))
+
+
+plt.imshow(xts[60].reshape(16,16),cmap='gray')
+plt.show()
+
+model.predict(xts[60].reshape(1,256))
+
+import cv2
+img=cv2.imread(r"/Users/anaconda/Desktop/img.png",0)
+plt.imshow(img,cmap='gray')
+plt.show
+
+model.predict(img.reshape(1,256))
+
+
+##################################
+from sklearn import ensemble
+model=ensemble.RandomForestClassifier(n_estimators=10)
+model.fit(xtr,ytr)
+model.score(xts,yts)
+
+
+#### KMEANS CLUSTERING ####
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+df=pd.read_csv(r"/Users/anaconda/Desktop/Wholesale customers data.csv")
+df2=df[['Fresh','Milk']]
+df2.shape
+
+
+from sklearn.cluster import KMeans
+model=KMeans(n_clusters=3,random_state=5)
+model.fit(df2)
+
+model.cluster_centers_
+
+plt.hist(model.labels_)
+
+df2['cluster']=model.labels_
+
+plt.figure(figsize=(12,5))
+
+plt.scatter(x='Fresh',y='Milk',c='r',
+            data=df2[df2['cluster']==0],
+                     label="Low Fresh MEdium Milk")
+
+plt.scatter(x='Fresh',y='Milk',c='g',
+            data=df2[df2['cluster']==1],
+                     label="High Fresh High Milk")
+
+plt.scatter(x='Fresh',y='Milk',c='b',
+            data=df2[df2['cluster']==2],
+                     label="Medium Fresh Low Milk")
+
+plt.legend()
+plt.show()
+
+df3=df[['Fresh','Milk','Grocery','Frozen']]
+model=KMeans(n_clusters=4,verbose=True)
+model.fit(df3)
+
+model.cluster_centers_
+
+plt.hist(model.labels_)
+
+
+
+#### PRINCIPAL COMPONENT ANALYSIS ####
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+x=np.random.randint(20,50,15)
+y=0.9*np.random.randint(0,8,15)+0.8*x
+
+plt.scatter(x,y)
+plt.show()
+
+
+data=np.concatenate(([x],[y]))
+data=data.T
+data.shape
+
+from sklearn.decomposition import pca
+pc=pca.PCA(n_components=1)
+
+data2=pc.fit_transform(data)
+data2.shape
+
+pc.explained_variance_ratio_
+
+
+#### TIME SERIES ANALYSIS ####
+
+import pandas 
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy
+
+df=pandas.read_csv(r"/Users/anaconda/Desktop/international-airline-passengers.csv",skipfooter=3)
+df.head()
+
+df['Month']=pandas.to_datetime(df['Month'])
+df.index=df['Month']
+df.head()
+
+
+Month	International airline passengers: monthly totals in thousands. Jan 49 ? Dec 60
+Month		
+1949-01-01	1949-01-01	112
+1949-02-01	1949-02-01	118
+1949-03-01	1949-03-01	132
+1949-04-01	1949-04-01	129
+1949-05-01	1949-05-01	121
+In [15]:
+
+df.drop(['Month'],axis=1,inplace=True)
+df.head(2)
+
+df.head()
+
+International airline passengers: monthly totals in thousands. Jan 49 ? Dec 60
+Month	
+1949-01-01	112
+1949-02-01	118
+1949-03-01	132
+1949-04-01	129
+1949-05-01	121
+In [19]:
+
+df.columns=['Volume']
+df.head(2)
+
+	Volume
+Month	
+1949-01-01	112
+1949-02-01	118
+In [21]:
+
+plt.figure(figsize=(12,5))
+plt.plot(df)
+plt.show()
+
+rollmean=df.rolling(10).mean()
+rollmean.head(20)
+
+Volume
+Month	
+1949-01-01	NaN
+1949-02-01	NaN
+1949-03-01	NaN
+1949-04-01	NaN
+1949-05-01	NaN
+1949-06-01	NaN
+1949-07-01	NaN
+1949-08-01	NaN
+1949-09-01	NaN
+1949-10-01	129.8
+1949-11-01	129.0
+1949-12-01	129.0
+1950-01-01	127.3
+1950-02-01	127.0
+1950-03-01	129.0
+1950-04-01	129.0
+1950-05-01	126.7
+1950-06-01	126.8
+1950-07-01	130.2
+1950-08-01	135.3
+In [26]:
+
+plt.figure(figsize=(12,5))
+plt.plot(df,'r')
+plt.plot(rollmean,'g')
+plt.show()
+
+dflog=numpy.log(df)
+plt.figure(figsize=(12,5))
+plt.plot(dflog)
+plt.show()
+
+dflogdiff=dflog-dflog.shift(1)
+dflogdiff.head()
+
+Volume
+Month	
+1949-01-01	NaN
+1949-02-01	0.052186
+1949-03-01	0.112117
+1949-04-01	-0.022990
+1949-05-01	-0.064022
+In [36]:
+
+rollmean2=dflogdiff.rolling(10).mean()
+plt.plot(dflogdiff,'r')
+plt.plot(rollmean2,'g')
+plt.show()
+
+
+from statsmodels.tsa.stattools import acf,pacf
+
+dflogdiff.dropna(inplace=True)
+ac=acf(dflogdiff,nlags=10)
+plt.plot(ac)
+plt.grid(True)
+plt.show()
+
+pac=pacf(dflogdiff,nlags=10)
+plt.plot(pac)
+plt.grid()
+plt.plot()
+
+from statsmodels.tsa import arima_model
+model=arima_model.ARIMA(dflog,(2,1,2))
+out=model.fit()
+
+out.forecast(168)
+
+forecast,error,c_interval=out.forecast(168)
+
+numpy.exp(forecast)
+
+
+

@@ -1,0 +1,201 @@
+Linear Regression
+------------------------------
+
+"""
+Created on Sun Nov  4 09:45:51 2018
+
+@author: anaconda
+"""
+"""It is used to solve Regression Problems """
+
+import theano as th
+import numpy as np
+import matplotlib.pyplot as plt
+x=th.tensor.fvector('x')
+y=th.tensor.fvector('y')
+m=th.shared(0.5,'m')
+c=th.shared(0.5,'c')
+yhat=m*x+c
+cost=th.tensor.mean(th.tensor.sqr(y-yhat))/2
+
+#Granient Descent
+LR=0.1
+gradm=th.tensor.grad(cost,m)
+gradc=th.tensor.grad(cost,c)
+mn=m-LR*gradm
+cn=c-LR*gradc
+#                input,output,updates m to mn and c to cn
+train=th.function([x,y],cost,updates=[(m,mn),(c,cn)])
+
+#data
+area=[1.2,1.8,2.4,5.6,3.4,6.8,4.3,5.2,2.6,2.8]
+price=[100,210,230,480,360,720,540,490,310,260]
+area=np.array(area).astype('float32')
+price=np.array(price).astype('float32')
+
+predict=th.function([x],yhat)
+pred_price1=predict(area)
+for i in range(1000):
+    cost_val=train(area,price)
+    print(cost_val)
+
+pred_price2=predict(area)
+print(m.get_value())
+print(c.get_value())
+
+plt.scatter(area,price)
+plt.plot(area,pred_price1,'r')
+plt.plot(area,pred_price2,'g')
+plt.show()
+
+
+import numpy as np
+import matplotlib.pyplot as plt
+area=[1.2,1.8,2.4,5.6,3.4,6.8,4.3,5.2,2.6,2.8]
+price=[100,210,230,480,360,720,540,490,310,260]
+area=np.array(area).reshape(10,1)
+price=np.array(price)
+
+from sklearn.linear_model import LinearRegression
+model=LinearRegression()
+
+#train the algo(internally it executes and gives the best value for m and c)
+model.fit(area,price)
+
+model.coef_
+model.intercept_
+ypred=model.predict(area)
+plt.scatter(area,price)
+plt.plot(area,ypred)
+plt.show()
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sb
+
+np.random.seed(6)
+ 
+df=pd.read_excel(r"/Users/anaconda/Downloads/CCPP/Folds5x2_pp.xlsx")
+
+cor=df.corr()
+plt.figure(figsize=(5,5))
+sb.heatmap(cor,annot=True,cmap='coolwarm')
+plt.show()
+
+sb.pairplot(df)
+
+y=df['PE']
+x=df.drop(['PE'],axis=1)
+
+from sklearn.model_selection import train_test_split
+xtr,xts,ytr,yts=train_test_split(x,y,test_size=0.2)
+
+from sklearn.linear_model import LinearRegression
+model=LinearRegression()
+
+#train algo
+model.fit(xtr,ytr)
+ip=np.array([13.97,39.16,1016.05,84.6]).reshape(1,4)
+model.predict(ip)
+
+#Performance Analysis
+ypred=model.predict(xts)
+from sklearn import metrics
+metrics.r2_score(yts,ypred)
+
+from sklearn.externals import joblib
+joblib.dump(model,'ccpp_model.pkl')
+
+Logistic Regression
+-----------------------------
+
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+x=np.arange(-50,50)
+
+plt.plot(x)
+plt.show()
+
+y=1/(1+np.exp(-1*x))
+
+plt.plot(x,y)
+plt.show()
+
+"""
+Created on Sun Nov  4 14:31:32 2018
+
+@author: anaconda
+"""
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sb
+
+df=pd.read_csv(r"/Users/anaconda/Desktop/Day1/Churn_Modelling.csv")
+df.drop(['RowNumber','Surname','CustomerId'],axis=1,inplace=True)
+
+cor=df.corr()
+plt.figure(figsize=(10,12))
+sb.heatmap(cor,annot=True,cmap='coolwarm')
+plt.show()
+
+x=df.drop(['Exited'],axis=1)
+y=df['Exited']
+
+#Converting Geography to binary 
+from sklearn.preprocessing import LabelEncoder
+le1=LabelEncoder()
+x['Geography']=le1.fit_transform(x['Geography'])
+
+#Converting Gender to binary 
+le2=LabelEncoder()
+x['Gender']=le1.fit_transform(x['Gender'])
+
+from sklearn.preprocessing import OneHotEncoder
+ohe=OneHotEncoder(categorical_features=[1])
+x=ohe.fit_transform(x).toarray()
+
+from sklearn.preprocessing import StandardScaler
+sc=StandardScaler()
+x=sc.fit_transform(x)
+
+from sklearn.model_selection import train_test_split
+xtr,xts,ytr,yts=train_test_split(x,y,test_size=0.2)
+
+#Logistic Regression
+from sklearn.linear_model import LogisticRegression
+model=LogisticRegression(tol=1e-8)
+np.random.seed(6)
+
+#train the model
+model.fit(xtr,ytr)
+
+#Performance Analysis
+ypred=model.predict(xts)
+from sklearn import metrics
+metrics.accuracy_score(yts,ypred)
+metrics.recall_score(yts,ypred)
+
+#Confusion Matrix
+cm=metrics.confusion_matrix(yts,ypred)
+
+####################---Decision Tree---####################
+from sklearn.tree import DecisionTreeClassifier
+
+model2=DecisionTreeClassifier(max_depth=10,min_samples_leaf=6,min_samples_split=20)
+
+#train the algo
+model2.fit(xtr,ytr)
+ypred2=model2.predict(xts)
+metrics.accuracy_score(yts,ypred2)
+metrics.recall_score(yts,ypred2)
+model2.score(xts,yts)
+model2.score(xtr,ytr)
+

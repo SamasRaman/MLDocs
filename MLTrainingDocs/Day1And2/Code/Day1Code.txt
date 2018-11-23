@@ -1,0 +1,253 @@
+NUMPY
+-------------------------
+
+import numpy as np
+
+"""a=np.array([1,2,3,4])
+
+a=a.reshape(2,2)
+print(a)
+b=np.arange(0,9)
+b=b.reshape(3,3)
+print(b)
+print(b[0:2,0:3])
+print(a[0][1])
+c=np.zeros(3)
+print(c)
+print(np.eye(5))
+
+import datetime as dt
+print(dt.datetime.now()) """
+
+"""numpy,scipy = mathematical and scientifical computation 
+
+  pandas = Data Import/Export , Data Cleaning , Analysis , 
+  Data Manupulation, Basic statictical analysis , Data Visualization 
+  
+  matplotlib,seaborn=Data Visualization
+  
+  statsmodels = Advance Statictics , forecasting , analysis and time series 
+  analysis
+  
+  scikit (sklearn) = machine Learning , Feature Engineering
+   
+  theano,tensorflow = (support GPU Computing)=Machine Learning, Deep Learning
+  
+  keras,pytorch = Advance Deep Cleaning
+  
+  openCV, scikit = image(skimage) = Image Processing ,computer vision
+  
+  NLTK,gensim = Text Processing ,NLP 
+  Flask , Django = Web App
+  
+  PyQt ,Tkinter = Desktop App   """
+
+
+x=[4,2,9]
+y=[3,8,7]
+print(x+y)
+a=np.array([7,8,6,3])
+b=np.array([3,2,1,6])
+a+b
+a-b
+a*b
+a/b
+
+c=np.array([[7,5,3,6,],[2,3,4,6,],[4,5,8,6]])
+c
+c.shape
+c.size
+c.max()
+c.min()
+c.mean()
+c.min(axis=1)  #row    wise operation  o/p=array([3, 2, 4])
+c.min(axis=0)  #column wise operation  o/p=array([2, 3, 3, 6])
+
+z=np.arange(10)
+z
+z=np.arange(2,12)
+z
+z=np.arange(3,12,2)
+z
+z=np.linspace(1,10,5) #It will create equally spaced 5 values
+z
+z=np.logspace(1,5,5,dtype='int32')
+z
+z=np.ones(5)
+z
+z=np.ones((2,3))
+z
+
+np.random.rand(5)          # Generate 5 nos between 0 to 1
+np.random.randint(10,20)   #Generate 1 no between 10 to 20
+np.random.seed(4)          #We will get fixed nos by seeding
+np.random.randint(10,20,5) #Generate 5 nos between 10 to 20
+
+#Linear Algebra Using Numpy
+#2x+y=11
+#x+3y=-12
+
+a=[[2,1],[1,-3]]
+b=[[11],[-12]]
+np.linalg.solve(a,b)
+
+m=np.matrix([[4,7,3],[3,2,7],[1,5,8]])
+m
+np.linalg.inv(m)
+np.linalg.det(m)
+np.linalg.matrix_rank(m)
+np.linalg.eig(m)
+
+np.sin(45)
+np.cos(45)
+np.exp(45)
+np.log(10)
+np.log10(10)
+np.sqrt(45)
+np.square(45)
+
+
+
+PANDAS
+--------------------------------------------------------------------------
+
+import numpy as np
+import pandas as p
+
+df=p.DataFrame([[1,2,3,4],[5,6,7,8],[9,10,11,12]])
+df
+
+data=np.random.randint(40,80,(20,5)) 
+data
+
+col=['M1','M2','M3','M4','M5']
+rows=p.date_range('20180125',periods=20)
+rows
+
+df=p.DataFrame(data,index=rows,columns=col)
+df
+df['M3']
+df['M3']['2018-01-25':'2018-01-28']
+df['M3'][df['M3']>70]
+df[['M3','M4']][df['M3']>70]
+df[['M3','M4']][df['M3']>70][df['M4']>70]      # For And Condition
+df[['M3','M4']][(df['M3']>70) & (df['M4']>70)] # For And Condition
+df[['M3','M4']][(df['M3']>70)|(df['M4']>70)]   # For Or  Condition
+
+df.describe() #It will give complete Statistical Data like count,mean,min,etc.
+
+df['M3'].min()
+df['M3'].max()
+df['M3'].mean()
+df['M3'].median()
+df['M3'].mode()
+df['M3'].var()
+df['M3'].std()
+df['M3'].skew()
+df['M3'].kurt()
+
+df.to_excel('machines.xlsx')
+
+
+
+import pandas as p
+data=p.read_csv(r"/Users/anaconda/Downloads/datawh.csv")
+
+data=p.read_csv(r"/Users/anaconda/Downloads/datanh.csv")
+data=p.read_csv(r"/Users/anaconda/Downloads/datanh.csv",header=None)
+data.columns=['temp','hum','pres','air']
+
+data=p.read_csv(r"/Users/anaconda/Downloads/datawh_missing.csv",na_values=['.','?']) #it will consider . and ? as missing values
+#find Missing values
+data.isnull().sum()
+            # (if 3 fields missing , delete Permanently)        
+data.dropna(thresh=3,inplace=True)
+
+#It will fill the mean value of temperature inplace of NaN value in Temperature Column
+data['Temperature'].fillna(data['Temperature'].mean(),inplace=True)
+
+#It will fill the median  value of each Column  inplace of NaN value in each Column
+data.fillna(data.median(),inplace=True)
+
+
+
+
+DATA VISUALIZATION
+-------------------------------------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+
+x=np.arange(-10,10,0.5)
+y=np.sin(x)
+
+plt.plot(x,y)
+plt.show()
+
+plt.scatter(x,y)
+plt.show()
+
+z=np.exp(0.2*x)
+plt.plot(x,y,'r',label='sin(x)')
+plt.plot(x,z,'g',label='exp(x)')
+plt.title('sin vs exp')
+plt.xlabel('value of x')
+plt.ylabel('value of y')
+plt.legend()
+plt.show()
+
+x=[45,66,23,85]
+lb=['BLR','DEL','CCU','BOM']
+plt.pie(x,labels=lb)
+plt.show()
+
+
+temp=[24,25,26,23,28,29,32,28,35,39,45]
+plt.hist(temp)
+plt.show()
+
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+data=pd.read_csv(r"/Users/anaconda/Downloads/Churn_Modelling.csv")
+
+data.drop(['RowNumber','Surname','CustomerId'],axis=1,inplace=True)
+
+plt.figure(figsize=(8,4))
+sns.distplot(data['CreditScore'][data['Exited']==0])
+sns.distplot(data['CreditScore'][data['Exited']==1])
+plt.legend(['0','1'])
+plt.show()
+
+plt.figure(figsize=(8,4))
+sns.distplot(data['Age'][data['Exited']==0])
+sns.distplot(data['Age'][data['Exited']==1])
+plt.legend(['0','1'])
+plt.show()
+
+plt.figure(figsize=(8,3))
+sns.countplot(data['Geography'])
+plt.show()
+
+plt.figure(figsize=(8,3))
+sns.countplot(data['Geography'][data['Exited']==1])
+plt.show()
+
+plt.figure(figsize=(8,3))
+sns.countplot(data['Gender'])
+plt.show()
+
+plt.figure(figsize=(8,3))
+sns.countplot(data['Gender'][data['Exited']==1])
+plt.show()
+
+cor=data.corr()
+plt.figure(figsize=(10,8))
+sns.heatmap(cor,annot=True,cmap='coolwarm')
+plt.show()
+
+
+
